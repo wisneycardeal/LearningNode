@@ -1,5 +1,12 @@
 import express from "express";
-import { boasVindas, listarPostPorId, listarPosts } from "../controllers/postsController.js";
+import {
+  atualizarPost,
+  boasVindas,
+  inserirPost,
+  listarPostPorCategoria,
+  listarPostPorId,
+  listarPosts,
+} from "../controllers/postsController.js";
 
 const routes = (app) => {
   // Configura o Express para analisar requisições com corpo JSON.
@@ -12,7 +19,13 @@ const routes = (app) => {
   app.get("/posts", listarPosts);
 
   // Define a rota GET para "/post/:id".
-  app.get("/post/:id", listarPostPorId);
+  app.get("/posts/:id", listarPostPorId);
+
+  app.post("/posts", inserirPost);
+
+  app.get("/posts/categoria/:categoria", listarPostPorCategoria);
+
+  app.put("/posts/:id", atualizarPost);
 };
 
 export default routes;

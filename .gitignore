@@ -400,3 +400,4 @@ FodyWeavers.xsd
 *.sln.iml
 
 chave-api.txt
+playground-1.mongodb.js
