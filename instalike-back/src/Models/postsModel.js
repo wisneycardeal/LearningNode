@@ -47,9 +47,12 @@ export async function buscarPostPorId(id) {
 }
 
 export async function atualizarPostPorId(id, dadosAtualizados) {
-  // Seleciona o banco de dados "imersao-instabytes".
   const db = conexao.db("imersao-instabytes");
-  // Seleciona a coleção "posts".
-  const colecao = db.collection("posts");
-  colecao.updateOne({ _id: new ObjectId(id) }, { $set: dadosAtualizados }, { upsert: true });
+  const resultado = await db
+    .collection("posts")
+    .updateOne(
+      { _id: new ObjectId(id) },
+      { $set: dadosAtualizados }
+    );  
+  return resultado;
 }

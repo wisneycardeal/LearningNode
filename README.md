@@ -29,4 +29,3 @@ Certifique-se de que os campos obrigatórios estão sendo preenchidos corretamen
 
 Refatorar o código para melhorar a organização:
 Crie uma nova pasta chamada middlewares e mova qualquer lógica de validação ou autenticação que você criar para lá.
-Implemente um middleware que verifique se o usuário está autenticado antes de permitir o acesso às rotas de criação e atualização de posts.

@@ -5,6 +5,7 @@ import {
   getTodosPosts,
   inserirNovoPost,
 } from "../Models/postsModel.js";
+import { ValidateParams } from "../middlewares/postsValidator.js";
 
 export async function boasVindas(req, res) {
   // Responde com uma mensagem de boas-vindas.
@@ -39,6 +40,11 @@ export async function listarPostPorId(req, res) {
 }
 
 export async function inserirPost(req, res) {
+  const errors = await ValidateParams(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const novoPost = req.body;
     const postCriado = await inserirNovoPost(novoPost);
@@ -59,12 +65,18 @@ export async function listarPostPorCategoria(req, res) {
 }
 
 export async function atualizarPost(req, res) {
+  const errors = await ValidateParams(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }  
   try {
     const id = req.params.id;
     const dadosAtualizados = req.body;
     const resultado = await atualizarPostPorId(id, dadosAtualizados);
     if (resultado.modifiedCount > 0) {
-      res.json({ message: "Post atualizado com sucesso" });
+      res.status(200).json({ message: "Post atualizado com sucesso" });
+    } else if (resultado.matchedCount > 0) {
+      res.status(304).json({ message: "Nenhuma atualização para o Post" });
     } else {
       res.status(404).json({ message: "Post não encontrado" });
     }
