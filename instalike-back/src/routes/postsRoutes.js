@@ -3,7 +3,9 @@ import multer from "multer";
 
 // Importa as funções do controlador de posts.
 import {
+  atualizarPost,
   boasVindas,
+  deletarPost,
   listarPostPorId,
   listarPosts,
   postarNovoPost,
@@ -48,6 +50,13 @@ const routes = (app) => {
   // Define a rota POST '/upload' que usa o middleware 'upload.single("imagem")' para lidar com o upload de uma única imagem
   // e chama a função uploadImagem.
   app.post("/upload", upload.single("imagem"), uploadImagem);
+
+  // Define a rota PUT '/posts/:id' que chama a função atualizarPost.
+  // Inclui o middleware upload.single('imagem') para lidar com o upload da imagem.
+  app.put("/posts/:id", upload.single("imagem"), atualizarPost);
+
+  app.delete("/posts/:id", deletarPost);
+  
 };
 
 // Exporta a função de rotas.
