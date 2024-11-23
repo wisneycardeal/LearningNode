@@ -1,6 +1,7 @@
 // Importa a função para conectar ao banco de dados.
+import 'dotenv.config';
+import { ObjectId } from "mongodb";
 import conectarAoBanco from "../config/dbConfig.js";
-
 
 // Chama a função conectarAoBanco para estabelecer a conexão com o banco de dados e armazena o resultado na variável conexao.
 const conexao = await conectarAoBanco(process.env.STRING_CONEXAO);
@@ -40,4 +41,14 @@ export async function criarPost(novoPost) {
   const postCriado = await colecao.insertOne(novoPost);
   // Retorna o resultado da inserção, que contém informações como o ID do novo post criado.
   return postCriado;
+}
+
+
+// Define uma função assíncrona para criar um novo post.
+export async function atualizarPost(id, novoPost) {
+  const db = conexao.db("imersao-instabytes");
+  const colecao = db.collection("posts");
+  const objId = ObjectId.createFromHexString(id);
+  const postAtualizado = await colecao.updateOne({ _id: new ObjectId(objId) }, { $set: novoPost });
+  return postAtualizado;
 }

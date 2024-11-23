@@ -1,7 +1,12 @@
 import fs from "fs";
+import {
+  gerarDescricaoComGemini,
+  gerarAltTextComGemini,
+} from "../services/geminiService.js";
 
 // Importa as funções do model de posts.
 import {
+  atualizarPost,
   buscarPostPorId,
   criarPost,
   getTodosPosts,
@@ -42,7 +47,6 @@ export async function listarPostPorId(req, res) {
   }
 }
 
-
 // Define o controller para a rota POST /posts.
 export async function postarNovoPost(req, res) {
   // Extrai o corpo da requisição contendo os dados do novo post.
@@ -56,19 +60,19 @@ export async function postarNovoPost(req, res) {
     // Se ocorrer um erro durante a criação do post, loga o erro no console.
     console.error(erro.message);
     // Envia uma mensagem de erro com status 500.
-    res.status(500).json({ "Erro": "Falha na requisição" });
+    res.status(500).json({ Erro: "Falha na requisição" });
   }
 }
 
 // Define o controller para a rota POST /upload.
 export async function uploadImagem(req, res) {
-  // Cria um novo objeto de post com a URL da imagem. Os demais campos estão vazios, 
+  // Cria um novo objeto de post com a URL da imagem. Os demais campos estão vazios,
   // assumindo que serão preenchidos posteriormente.
   const novoPost = {
     descricao: "",
-    imageurl: req.file.originalname,
+    imgurl: req.file.originalname,
     alt: "",
-    categoria: ""
+    categoria: "",
   };
 
   try {
@@ -84,6 +88,29 @@ export async function uploadImagem(req, res) {
     // Se ocorrer um erro durante o upload, loga o erro no console.
     console.error(erro.message);
     // Envia uma mensagem de erro com status 500.
-    res.status(500).json({ "Erro": "Falha na requisição" });
+    res.status(500).json({ Erro: "Falha na requisição" });
+  }
+}
+
+export async function atualizarNovoPost(req, res) {
+  try {
+    const id = req.params.id;
+    const urlImagem = `http://localhost:3000/${id}.png`;
+    const imgBuffer = fs.readFileSync(`uploads/${id}.png`);
+    const descricao = await gerarDescricaoComGemini(imgBuffer);
+    const altText = await gerarAltTextComGemini(imgBuffer);
+
+    const post = {
+      descricao: descricao,
+      imgurl: urlImagem,
+      alt: altText,
+      categoria: req.body.categoria,
+    };
+
+    const postAtualizado = await atualizarPost(id, post);
+    res.status(201).json(postAtualizado);
+  } catch (erro) {
+    console.error(erro.message);
+    res.status(500).json({ Erro: "Falha na requisição" });
   }
 }
